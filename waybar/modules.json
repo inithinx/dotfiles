@@ -1,0 +1,116 @@
+{
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10"
+        },
+        "on-click": "activate",
+        "sort-by-number": true,
+        "active-only": false
+    },
+    "hyprland/window": {
+        "format": "<span foreground=\"#A7C080\"> </span> {}",
+        "max-length": 50
+    },
+    "clock": {
+        "format": "{:%I:%M %p}",
+        "format-alt": "{:%a %d %b %Y - %I:%M %p}"
+    },
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "<span foreground=\"#A7C080\">{icon}</span> {percent}% ",
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],
+        "scroll-step": 0.2,
+        "on-click": "pkill -USR1 gammastep || gammastep",
+        "tooltip-format": "Brightness"
+    },
+    "pulseaudio": {
+        "scroll-step": 1,
+        "format": "<span foreground=\"#A7C080\">{icon}</span> {volume}% {format_source}",
+        "format-bluetooth": "<span foreground=\"#A7C080\">{icon}<span> {volume}%  {format_source}",
+        "format-bluetooth-muted": "<span foreground=\"#A7C080\"> {icon}</span> {format_source} ",
+        "format-muted": "<span foreground=\"#F85552\"> </span> {format_source} ",
+        "format-source": "<span foreground=\"#A7C080\"></span> {volume}% ",
+        "format-source-muted": "<span foreground=\"#F85552\"></span>",
+        "format-icons": {
+            "headphone": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [
+                "<span foreground=\"#3D484D\">|</span> ",
+                "<span foreground=\"#3D484D\">|</span> ",
+                "<span foreground=\"#3D484D\">|</span> "
+            ]
+        },
+        "on-click": "pavucontrol"
+    },
+    "battery": {
+        "states": {
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "<span foreground=\"#3D484D\">|</span> {icon} {capacity}% ",
+        "format-charging": "<span foreground=\"#A7c080\">|  </span>{capacity}%",
+        "format-plugged": "<span foreground=\"#3D484D\">|  </span>{capacity}%",
+        "format-icons": [
+            "<span foreground=\"#A7C080\"> </span>",
+            "<span foreground=\"#A7C080\"> </span>",
+            "<span foreground=\"#A7C080\"> </span>",
+            "<span foreground=\"#A7C080\"> </span>",
+            "<span foreground=\"#A7C080\"> </span>"
+        ]
+    },
+    "network": {
+        "format": "<span foreground=\"#3D484D\">|</span> {ifname}",
+        "format-wifi": "<span foreground=\"#3D484D\">|</span> <span foreground=\"#A7C080\"> </span> {essid} {signalStrength}% ",
+        "format-ethernet": "<span foreground=\"#3D484D\">|</span> <span foreground=\"#A7C080\">󰊗</span> {ipaddr}",
+        "format-disconnected": "",
+        "tooltip-format": "{ifname} via {gwaddr}",
+        "tooltip-format-wifi": "{ipaddr}/{cidr}",
+        "tooltip-format-ethernet": "{ifname} via {gwaddr}",
+        "tooltip-format-disconnected": "Disconnected",
+        "max-length": 50,
+        "on-click": "nm-connection-editor"
+    },
+    "disk": {
+        "interval": 30,
+        "format": "<span foreground=\"#A7C080\" weight=\"bold\">/</span> {percentage_used}% ",
+        "path": "/"
+    },
+    "cpu": {
+        "format": "<span foreground=\"#3D484D\">|</span> <span foreground=\"#A7C080\" weight=\"bold\"> </span> {usage}% "
+    },
+    "memory": {
+        "format": "<span foreground=\"#3D484D\">|</span> <span foreground=\"#A7C080\" weight=\"bold\"> </span> {}% "
+    },
+    "tray": {
+        "icon-size": 21,
+        "spacing": 10
+    },
+    "custom/wlogout": {
+        "format": "⏻",
+        "on-click": "bash /home/nk/.config/wofi/scripts/power.sh",
+        "tooltip": false
+    }
+}

@@ -1,0 +1,34 @@
+[global]
+    font = 'FiraCode Nerd Font'
+    format = "  <b>%s</b>\n %b"
+
+[normal]
+    foreground = "#d8dee9"
+    background = "#3b4252"
+    frame_color = "#a3be8c"
+
+[low]
+    foreground = "#d8dee9"
+    background = "#3b4252"
+    frame_color = "#81a1c1"
+
+[critical]
+    foreground = "#eceff4"
+    background = "#bf616a"
+    frame_color = "#bf616a"
+
+[urgency_low]
+    foreground = "#eceff4"
+    background = "#4c566a"
+    frame_color = "#81a1c1"
+
+[urgency_normal]
+    foreground = "#eceff4"
+    background = "#4c566a"
+    frame_color = "#bf616a"
+
+[urgency_critical]
+    foreground = "#eceff4"
+    background = "#4c566a"
+    frame_color = "#bf616a"
+
