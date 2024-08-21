@@ -55,6 +55,7 @@
               type = "filesystem";
               format = "ext4";
               mountpoint = "/media";
+	      mountOptions = [ "noatime" "nodiratime" "discard" ];
             };
           };
         };
@@ -63,7 +64,7 @@
     nodev."/" = {
       fsType = "tmpfs";
       mountOptions = [
-        "size=1G"
+        "size=4G"
         "defaults"
         "mode=755"
       ];

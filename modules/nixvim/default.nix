@@ -22,7 +22,7 @@
         iconsEnabled = true;
         theme = "dashboard";
       };
-      colorschemes.catppuccin.enable = true;
+      #colorschemes.catppuccin.enable = true;
       plugins.lualine = {
         enable = true;
 	      iconsEnabled = false;
@@ -30,7 +30,7 @@
       plugins.treesitter = {
         enable = true;
         folding = true;
-        indent = true;
+        settings.indent.enable = true;
       };
       plugins.undotree.enable = true;
       plugins.telescope = {
@@ -56,9 +56,9 @@
             enable = true;
             settings.telemetry.enable = false;
           };
-          golangci-lint-ls.enable = true;
+          #golangci-lint-ls.enable = true;
           #bashls.enable = true;
-          sqls.enable = true;
+          #sqls.enable = true;
         };
       };
       plugins.none-ls = {

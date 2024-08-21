@@ -18,10 +18,18 @@
   };
 
   environment.systemPackages = [ inputs.agenix.packages."x86_64-linux".default ];
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    extraPackages = [ pkgs.libva ];
+    extraPackages = with pkgs; [ 
+      libva 
+      intel-media-driver
+      intel-vaapi-driver # previously vaapiIntel
+      vaapiVdpau
+      libvdpau-va-gl
+      intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
+      vpl-gpu-rt # QSV on 11th gen or newer
+      intel-media-sdk # QSV up to 11th gen
+    ];
   };
 
   networking.useDHCP = lib.mkDefault true;

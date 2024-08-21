@@ -14,23 +14,23 @@
   };
 
   # Enable sound.
-  sound.enable = false;
-  # hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.enable = false;
 
   users.users.nithin = {
     isNormalUser = true;
     #extraGroups = [ "wheel" "acme" "nextcloud" ]; # Enable ‘sudo’ for the user.
-    extraGroups = [ "wheel" "acme" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "acme" "render" "video" ]; # Enable ‘sudo’ for the user.
     initialPassword = "30028060";
   };
   programs.bash.shellInit = "pfetch";
 
-  environment.systemPackages =  with pkgs; [ btop git mcrcon ripgrep jq pfetch-rs neovim docker  ]; 
+  environment.systemPackages =  with pkgs; [ htop-vim git mcrcon ripgrep jq pfetch-rs neovim docker  ]; 
 
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   fileSystems."/persist".neededForBoot = true;
+
   # Housekeeping
   nix.gc = {
     automatic = true;
@@ -46,6 +46,8 @@
     EDITOR = "nvim";
     MANPAGER = "nvim +Man!";
   };
+  services.tailscale.enable = true;
+  services.logrotate.enable = true;
   # OpenSSH 
   services.openssh = {
     enable = true;

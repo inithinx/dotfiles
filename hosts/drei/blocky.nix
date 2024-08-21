@@ -16,6 +16,19 @@
         };
         clientGroupsBlock = { default = [ "hagezi" ]; };
       };
+      customDNS = {
+        customTTL = "3h";
+        filterUnmappedTypes = false;
+        mapping = {
+          "sonarr.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+          "radarr.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+          "prowlarr.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+          "deluge.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+          "jellyfin.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+          "jellyseerr.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+          "flare.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = "10.0.0.3";
+        };
+      };
     };
   };
 

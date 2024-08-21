@@ -5,6 +5,8 @@
 #################
 
   security.acme = {
+    # staging env, use this when testing stuff.
+    defaults.server = "https://acme-staging-v02.api.letsencrypt.org/directory";
     acceptTerms = true;
     defaults.email = "inithin683@gmail.com";
     certs."${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {

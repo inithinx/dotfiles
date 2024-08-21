@@ -25,6 +25,9 @@
       directories = [ 
         ".ssh"
       ];
+      files = [
+        ".zshrc"
+      ];
     };
   };
   programs.fuse.userAllowOther = true;

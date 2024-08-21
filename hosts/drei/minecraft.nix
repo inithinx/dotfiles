@@ -36,7 +36,7 @@
 	    hide-online-players=false;
 	    max-players=5;
 	    motd="BrainDead Minecraft Server";
-	    online-mode=false;
+	    online-mode=true;
 	    prevent-proxy-connections=false;
 	    server-port=25565;
 	    enable-query=true;

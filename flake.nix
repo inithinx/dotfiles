@@ -81,8 +81,8 @@ inputs = {
           nixvim.nixosModules.nixvim
           ./modules/nixvim
           # Import AgeNix provided module and custom config.
-          #agenix.nixosModules.default
-          #./modules/agenix
+          agenix.nixosModules.default
+          ./modules/agenix
 	        # Disko
 	        disko.nixosModules.default
 	        # Impermanence

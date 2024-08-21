@@ -5,35 +5,33 @@
     #openFirewall = true;
     user = "nithin";
     group = "users";
-    dataDir = "/data/jellyfin";
-    configDir = "/data/jellyfin/config";
-    cacheDir = "/data/jellyfin/cache";
+    #dataDir = "/data/jellyfin";
+    #configDir = "/data/jellyfin/config";
+    #cacheDir = "/data/jellyfin/cache";
   };
 
-  users.users.jellyfin = {
-    extraGroups = [ "render" "video" ]; # Access to /dev/dri
-    isSystemUser = true;
-    group = "users";
-  };
+  #users.users.jellyfin = {
+  #  extraGroups = [ "render" "video" ]; # Access to /dev/dri
+  #  isSystemUser = true;
+  #  group = "users";
+  #};
 
   services.sonarr = {
     enable = true;
     user = "nithin";
     group = "users";
-    dataDir = "/data/sonarr";
+    #dataDir = "/data/sonarr";
   };
 
   services.radarr = {
     enable = true;
     user = "nithin";
     group = "users";
-    dataDir = "/data/radarr";
+    #dataDir = "/data/radarr";
   };
 
   services.prowlarr = {
     enable = true;
-    #user = "nithin";
-    #group = "users";
   };
 
   services.jellyseerr = {
@@ -45,8 +43,16 @@
     user = "nithin";
     group = "users";
     web.enable = true;
-    dataDir = "/data/deluge";
+    #dataDir = "/data/deluge";
   };
+
+  #services.flaresolverr = {
+  #  enable = true;
+  #  port = 8191;
+  #  package = pkgs.flaresolverr;
+  #};
+
+  # Flaresolverr broken for now, using docker as fallback.
 
   virtualisation.oci-containers = {
     backend = "docker";
@@ -62,5 +68,6 @@
       };
     };
   };
+  
 
 }

@@ -25,7 +25,7 @@
   networking = {
     #useDHCP = lib.mkDefault true;
     hostName = "eins";
-    firewall.allowedTCPPorts = [ ];
+    firewall.allowedTCPPorts = [ 22 ];
     firewall.allowedUDPPorts = [ ];
     firewall.enable = true;
     networkmanager.enable = true;
@@ -33,7 +33,6 @@
 
   zramSwap = {
     enable = true;
-    numDevices = true;
     memoryPercent = 50;
     priority = 10;
   };

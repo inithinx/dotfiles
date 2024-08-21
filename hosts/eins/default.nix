@@ -3,5 +3,6 @@
       ./configuration.nix
       ./disko.nix
       ./system.nix
+      ./impermanence.nix
   ];
 }

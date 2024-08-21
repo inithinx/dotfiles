@@ -8,20 +8,21 @@
     directories = [
       { directory = "/etc/nixos"; user = "nithin"; group = "users"; mode= "u=rwx,g=rx,o="; }
       "/etc/secureboot"
-      #"/etc/ssh"
       "/etc/NetworkManager/system-connections"
       "/var/log"
-      "/root/.ssh"
       "/var/lib/acme"
-      "/var/lib/bitwarden_rs"
-      "/var/lib/docker"
-      "/var/lib/redis-nextcloud"
-      "/var/lib/samba"
-      "/var/lib/jellyseerr"
-      "/var/lib/private"
-      "/run/agenix"
-
+      "/var/lib/nixos" # without this, users and groups get fucked or something ?
+      #"/var/lib/bitwarden_rs"
+      #"/var/lib/docker"
+      #"/var/lib/redis-nextcloud"
+      #"/var/lib/samba"
+      {directory="/var/lib/private"; mode="u=rwx,g=,o="; }
+      {directory="/var/lib/deluge"; user="nithin"; group="users";}
+      {directory="/var/lib/jellyfin"; user="nithin"; group="users";}
+      "/var/lib/sonarr"
+      "/var/lib/radarr"
     ];
+
     files = [
       "/etc/machine-id"
       "/etc/ssh/ssh_host_ed25519_key"

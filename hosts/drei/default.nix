@@ -3,15 +3,15 @@
       ./configuration.nix
       ./disko.nix
       ./system.nix
-      #./blocky.nix
+      ./blocky.nix
       #./coturn.nix
       #./database.nix
       #./gitea.nix
       ./impermanence.nix
       #./nextcloud.nix
-      #./media.nix
-      #./nginx.nix
-      #./minecraft.nix
+      ./media.nix
+      ./nginx.nix
+      ./minecraft.nix
       #./samba.nix
       #./vaultwarden.nix
   ];
