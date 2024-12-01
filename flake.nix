@@ -81,7 +81,7 @@
                   ./modules/lanzaboote
                   nixvim.nixosModules.nixvim
                   ./modules/nixvim
-                  disko.nixosModules.defaultfl
+                  disko.nixosModules.default
                   impermanence.nixosModules.impermanence
                   # NOTE:- impermanence config files are imported on a hostname basis, see in the appropriate hostname-level configs.
                 ]
