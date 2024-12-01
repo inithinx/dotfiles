@@ -1,5 +1,5 @@
 let
-  drei = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDRERTMAeoQMLapD3eI3eDzJdX68VCsI0foiZJ2UqdOD";
+  drei = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICL4bv3e1a3VyqgpyPY4d5hFA6voobsiIvhdTnJsKcZa";
   systems = [ drei ];
 
 in

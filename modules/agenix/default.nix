@@ -1,4 +1,11 @@
-{pkgs, lib, inputs, agenix, ...}: {
+{
+  pkgs,
+  lib,
+  inputs,
+  agenix,
+  ...
+}:
+{
 
   age.secretsMountPoint = "/persist/agenix/generations";
   age.secretsDir = "/persist/agenix/secrets";
@@ -9,42 +16,42 @@
     #  owner = "turnserver";
     #  group = "turnserver";
     #};
-    nc = {
-      file = ./secrets/nc.age;
-      #owner = "nextcloud";
-      #group = "nextcloud";
-    };
-    vw-token = {
-      file = ./secrets/vw-token.age;
-      owner = "";
-      group = "";
-    };
+    #nc = {
+    #  file = ./secrets/nc.age;
+    #owner = "nextcloud";
+    #group = "nextcloud";
+    #};
+    #vw-token = {
+    #  file = ./secrets/vw-token.age;
+    #  owner = "";
+    #  group = "";
+    #};
     #gitea-actions = {
     #  file = ./secrets/gitea-actions.age;
     #  owner = "gitea-runner";
     #  group = "gitea-runner";
     #};
-    smtp-from = {
-      file = ./secrets/smtp-from.age;
-        owner = "";
-      group = "";
-    };
-    smtp-user = {
-      file = ./secrets/smtp-user.age;
-      owner = "";
-      group = "";
-    };
-    
-    smtp-pass = {
-      file = ./secrets/smtp-pass.age;
-      owner = "";
-      group = "";
-    };
-    smtp-host = {
-      file = ./secrets/smtp-host.age;
-      owner = "";
-      group = "";
-    };
+    #smtp-from = {
+    #  file = ./secrets/smtp-from.age;
+    #  owner = "";
+    #  group = "";
+    #};
+    #smtp-user = {
+    #  file = ./secrets/smtp-user.age;
+    #  owner = "";
+    #  group = "";
+    #};
+
+    #smtp-pass = {
+    #  file = ./secrets/smtp-pass.age;
+    #  owner = "";
+    #  group = "";
+    #};
+    #smtp-host = {
+    #  file = ./secrets/smtp-host.age;
+    #  owner = "";
+    #  group = "";
+    #};
     domain = {
       file = ./secrets/domain.age;
       owner = "";

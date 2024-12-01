@@ -1,31 +1,44 @@
-{ config, lib, pkgs, modulesPath, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
+{
 
-#################
-###### SSL ######
-#################
+  #################
+  ###### SSL ######
+  #################
 
   security.acme = {
     # staging env, use this when testing stuff.
-    defaults.server = "https://acme-staging-v02.api.letsencrypt.org/directory";
+    #defaults.server = "https://acme-staging-v02.api.letsencrypt.org/directory";
     acceptTerms = true;
     defaults.email = "inithin683@gmail.com";
+    #defaults.group  = "acme";
     certs."${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
       domain = "*.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
+      extraDomainNames = [
+        "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}"
+      ];
       dnsProvider = "cloudflare";
       environmentFile = config.age.secrets.cloudflare.path;
-      };
+      #group = "acme";
+    };
   };
 
-###################
-###### Nginx ######
-###################
+  ###################
+  ###### Nginx ######
+  ###################
   #users.users.nginx.isNormalUser = false;
+  users.users.nginx.extraGroups = [ "acme" ];
   services.nginx = {
     enable = true;
     package = pkgs.nginxQuic;
     # Hosts and user setup
-    user = "nithin";
-    group = "users";
+    #user = "nithin";
+    #group = "users";
     # Hardening
     recommendedGzipSettings = true;
     recommendedOptimisation = true;
@@ -40,21 +53,22 @@
         useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
         locations."/".proxyPass = "http://127.0.0.1:8112/";
       };
-      "git.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
-        forceSSL = true;
-        useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
-        locations."/".proxyPass = "http://127.0.0.1:3001";
-      };
-      "cloud.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
-        forceSSL = true;
-        useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
-	      locations = { 
-          "/".proxyWebsockets = true;
-          # uh, equals what?
-          #"~ ^\/nextcloud\/(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)\.php(?:$|\/)" = {};
-          "~ ^(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)\.php(?:$|\/)" = {};
-          };
-      };
+      #"git.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
+      #  forceSSL = true;
+      #  useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
+      #  locations."/".proxyPass = "http://127.0.0.1:3001";
+      #};
+      #"cloud.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
+      #  forceSSL = true;
+      #  useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
+      #  locations = {
+      #    "/".proxyWebsockets = true;
+      # uh, equals what?
+      #"~ ^\/nextcloud\/(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)\.php(?:$|\/)" = {};
+      #    "~ ^(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)\.php(?:$|\/)" =
+      #      { };
+      #  };
+      #};
       "sonarr.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
         forceSSL = true;
         useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
@@ -104,7 +118,9 @@
       "*.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
         forceSSL = true;
         useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
-        globalRedirect = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.personaldomain.path)}";
+        globalRedirect = "${lib.strings.removeSuffix "\n" (
+          builtins.readFile config.age.secrets.personaldomain.path
+        )}";
       };
     };
   };

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   services.coturn = {
     enable = true;
     lt-cred-mech = true;
@@ -11,8 +17,8 @@
       no-multicast-peers
     ";
     secure-stun = true;
-    cert="/var/lib/acme/${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}/fullchain.pem";
-    pkey="/var/lib/acme/${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}/key.pem";
+    cert = "/var/lib/acme/${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}/fullchain.pem";
+    pkey = "/var/lib/acme/${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}/key.pem";
     min-port = 49152;
     max-port = 49999;
   };

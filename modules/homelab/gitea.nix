@@ -1,5 +1,12 @@
-{ config, lib, pkgs, modulesPath, ... }: {
-  services.gitea= {
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
+{
+  services.gitea = {
     enable = true;
     package = pkgs.gitea;
     user = "gitea";
@@ -35,16 +42,17 @@
       type = "postgres";
       user = "gitea";
       name = "gitea";
-    };  
+    };
   };
-
 
   services.gitea-actions-runner = {
     instances."runner" = {
       #enable = true;
       enable = false;
       name = "runner";
-      token = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.gitea-actions.path)}";
+      token = "${lib.strings.removeSuffix "\n" (
+        builtins.readFile config.age.secrets.gitea-actions.path
+      )}";
       url = "https://git.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
       labels = [ "native:host" ];
     };
