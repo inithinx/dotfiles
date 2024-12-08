@@ -12,11 +12,8 @@
       ];
     };
   };
-  environment.systemPackages = with pkgs; [
-    teams
-    whatsapp-for-linux
-    steam
-    spotify-qt
-  ];
+
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "nithin";
 
 }
