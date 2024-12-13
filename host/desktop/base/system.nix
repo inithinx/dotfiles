@@ -3,6 +3,7 @@
   meta,
   pkgs,
   config,
+  lib,
   ...
 }:
 {

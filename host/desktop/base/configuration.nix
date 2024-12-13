@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 {
 
   # Set your time zone.
@@ -31,7 +31,6 @@
     shellInit = "pfetch";
     vteIntegration = true;
     syntaxHighlighting.enable = true;
-    autoenv.enable = true;
     autosuggestions = {
       enable = true;
     };

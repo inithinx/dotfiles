@@ -62,8 +62,8 @@
               let
                 desktopModules = [
                   ./host/desktop
-                  (if name == "zwei" then ./host/desktop/eins else null)
-                  (if name == "drei" then ./host/desktop/zwei else null)
+                  (if name == "drei" then ./host/desktop/drei else null)
+                  (if name == "vier" then ./host/desktop/vier else null)
                 ];
                 serverModules = [
                   ./host/server
@@ -85,7 +85,7 @@
                   impermanence.nixosModules.impermanence
                   # NOTE:- impermanence config files are imported on a hostname basis, see in the appropriate hostname-level configs.
                 ]
-                ++ (if name == "zwei" || name == "drei" then desktopModules else serverModules)
+                ++ (if name == "drei" || name == "vier" then desktopModules else serverModules)
               );
           };
         }) nodes
