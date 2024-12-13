@@ -123,7 +123,7 @@
   services.logrotate.enable = true;
   services.power-profiles-daemon.enable = true;
 
-  # Set up NIX itself. 
+  # Set up NIX itself.
   nix.gc = {
     automatic = true;
     options = "--delete-older-than 3d";

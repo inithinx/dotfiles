@@ -81,7 +81,7 @@
   };
   services.tailscale.enable = true;
   services.logrotate.enable = true;
-  # OpenSSH 
+  # OpenSSH
   services.openssh = {
     enable = true;
     settings.PermitRootLogin = "no";

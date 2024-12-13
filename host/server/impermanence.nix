@@ -10,6 +10,7 @@
 
   # Needed for Booting NixOs.
   # NixOs Setup
+  fileSystems."/persist".neededForBoot = true;
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;

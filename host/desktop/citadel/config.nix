@@ -1,8 +1,8 @@
-{pkgs, ... }:
+{ pkgs, ... }:
 {
 
   boot = {
-    kernelModules = [ "kvm-amd" ];
+    kernelModules = [ "kvm-intel" ];
     initrd = {
       availableKernelModules = [
         "xhci_pci"
@@ -12,11 +12,4 @@
       ];
     };
   };
-  environment.systemPackages = with pkgs; [
-    teams
-    whatsapp-for-linux
-    steam
-    spotify-qt
-  ];
-
 }

@@ -10,6 +10,7 @@
 
   # Needed for Booting NixOs.
   # NixOs Setup
+  fileSystems."/persist".neededForBoot = true;
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
@@ -24,6 +25,7 @@
       #"/etc/ssh"
       "/etc/NetworkManager/system-connections"
       "/var/log"
+      "/var/lib/nixos" # without this, users and groups get fucked or something ?
     ];
     files = [
       "/etc/machine-id"

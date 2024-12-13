@@ -41,9 +41,9 @@
     let
       lib = nixpkgs.lib;
       nodes = [
-        "zwei"
-        "drei"
-        "vier"
+        "citadel"
+        "pathfinder"
+        "singularity"
       ];
     in
     {
@@ -62,8 +62,8 @@
               let
                 desktopModules = [
                   ./host/desktop
-                  (if name == "drei" then ./host/desktop/drei else null)
-                  (if name == "vier" then ./host/desktop/vier else null)
+                  (if name == "citadel" then ./host/desktop/citadel else null)
+                  (if name == "pathfinder" then ./host/desktop/pathfinder else null)
                 ];
                 serverModules = [
                   ./host/server
@@ -85,7 +85,7 @@
                   impermanence.nixosModules.impermanence
                   # NOTE:- impermanence config files are imported on a hostname basis, see in the appropriate hostname-level configs.
                 ]
-                ++ (if name == "drei" || name == "vier" then desktopModules else serverModules)
+                ++ (if name == "citadel" || name == "pathfinder" then desktopModules else serverModules)
               );
           };
         }) nodes
