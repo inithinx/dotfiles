@@ -7,18 +7,23 @@
     };
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim = {
       url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     disko = {
       url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     impermanence = {
       url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {
       url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     microvm = {
       url = "github:astro/microvm.nix";
@@ -72,7 +77,7 @@
                   #microvm.nixosModules.host
                   # Optional modules
                   # ./modules/k3svm
-                  # ./modules/homelab
+                  ./modules/homelab
                 ];
               in
               lib.filter (mod: mod != null) (

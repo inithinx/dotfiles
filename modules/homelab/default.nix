@@ -8,12 +8,10 @@
 {
   imports = [
     #./coturn.nix
-    ./database.nix
-    #./gitea.nix
+    #./database.nix
     #./nextcloud.nix
     ./media.nix
-    ./nginx.nix
+    #./nginx.nix
     #./minecraft.nix
-    ./wordpress.nix
   ];
 }

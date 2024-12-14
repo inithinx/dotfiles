@@ -41,9 +41,10 @@
       v = "nvim";
     };
   };
-  programs.starship.enable = true;
+  #programs.starship.enable = true;
 
   # Programs to be installed system-wide.
+  programs.neovim.vimAlias = true;
   environment.systemPackages = with pkgs; [
     # Bare minimum.
     htop-vim
@@ -94,12 +95,6 @@
     wireplumber.enable = true;
   };
 
-  # KDE
-  services.displayManager.sddm.enable = true;
-  services.xserver.enable = false;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
   # Set up printing and avahi for auto-discovery.
   services.printing.enable = true;
   services.avahi = {
@@ -113,11 +108,6 @@
     EDITOR = "nvim";
     MANPAGER = "nvim +Man!";
   };
-
-  # Some nice stuff
-  programs.direnv.enable = true;
-  programs.neovim.vimAlias = true;
-  programs.autojump.enable = true;
 
   services.tailscale.enable = true;
   services.logrotate.enable = true;

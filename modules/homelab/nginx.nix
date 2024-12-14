@@ -53,22 +53,6 @@
         useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
         locations."/".proxyPass = "http://127.0.0.1:8112/";
       };
-      #"git.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
-      #  forceSSL = true;
-      #  useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
-      #  locations."/".proxyPass = "http://127.0.0.1:3001";
-      #};
-      #"cloud.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
-      #  forceSSL = true;
-      #  useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
-      #  locations = {
-      #    "/".proxyWebsockets = true;
-      # uh, equals what?
-      #"~ ^\/nextcloud\/(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)\.php(?:$|\/)" = {};
-      #    "~ ^(?:index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy)\.php(?:$|\/)" =
-      #      { };
-      #  };
-      #};
       "sonarr.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
         forceSSL = true;
         useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
@@ -109,11 +93,6 @@
         forceSSL = true;
         useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
         locations."/".proxyPass = "http://127.0.0.1:8191/";
-      };
-      "vault.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
-        forceSSL = true;
-        useACMEHost = "${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}";
-        locations."/".proxyPass = "http://127.0.0.1:8812/";
       };
       "*.${lib.strings.removeSuffix "\n" (builtins.readFile config.age.secrets.domain.path)}" = {
         forceSSL = true;

@@ -6,42 +6,43 @@
   ...
 }:
 {
-
   services.jellyfin = {
     enable = true;
-    #openFirewall = true;
+    # openFirewall = true; # Uncomment if needed
     user = "nithin";
     group = "users";
-    #dataDir = "/data/jellyfin";
-    #configDir = "/data/jellyfin/config";
-    #cacheDir = "/data/jellyfin/cache";
+    # dataDir = "/data/jellyfin"; # Uncomment if needed
+    # configDir = "/data/jellyfin/config"; # Uncomment if needed
+    # cacheDir = "/data/jellyfin/cache"; # Uncomment if needed
   };
 
   users.users.jellyfin = {
     extraGroups = [
       "render"
       "video"
-    ]; # Access to /dev/dri
+    ];
     isSystemUser = true;
     group = "users";
   };
 
-  #services.sonarr = {
-  #  enable = true;
-  #  user = "nithin";
-  #  group = "users";
-  #dataDir = "/data/sonarr";
-  #};
-  #nixpkgs.config.permittedInsecurePackages = [
-  #  "aspnetcore-runtime-wrapped-6.0.36"
-  #];
+  services.sonarr = {
+    enable = true;
+    user = "nithin";
+    group = "users";
+  };
 
-  #services.radarr = {
-  #  enable = true;
-  #  user = "nithin";
-  #  group = "users";
-  #dataDir = "/data/radarr";
-  #};
+  nixpkgs.config.permittedInsecurePackages = [ # Use with caution!
+    "aspnetcore-runtime-6.0.36"
+    "aspnetcore-runtime-wrapped-6.0.36"
+    "dotnet-sdk-6.0.428"
+    "dotnet-sdk-wrapped-6.0.428"
+  ];
+
+  services.radarr = {
+    enable = true;
+    # user = "nithin"; # Uncomment if needed
+    # group = "users"; # Uncomment if needed
+  };
 
   services.prowlarr = {
     enable = true;
@@ -56,16 +57,13 @@
     user = "nithin";
     group = "users";
     web.enable = true;
-    #dataDir = "/data/deluge";
   };
 
-  #services.flaresolverr = {
-  #  enable = true;
-  #  port = 8191;
-  #  package = pkgs.flaresolverr;
-  #};
-
-  # Flaresolverr broken for now, using docker as fallback.
+  # services.flaresolverr = { # Use Nix package if desired
+  #   enable = true;
+  #   port = 8191;
+  #   package = pkgs.flaresolverr;
+  # };
 
   virtualisation.oci-containers = {
     backend = "docker";
@@ -76,7 +74,7 @@
       environment = {
         LOG_LEVEL = "warning";
         LOG_HTML = "false";
-        CAPTCHA_SOLVER = "hcaptcha-solver";
+        CAPTCHA_SOLVER = "hcaptcha-solver"; # Ensure this is configured correctly
         TZ = "Asia/Kolkata";
       };
     };
@@ -88,7 +86,7 @@
     directories = [
       "/var/lib/acme"
       "/var/lib/docker"
-      #"/var/lib/redis-nextcloud"
+      # "/var/lib/redis-nextcloud" # Uncomment if needed
       {
         directory = "/var/lib/private";
         mode = "u=rwx,g=,o=";
@@ -107,5 +105,4 @@
       "/var/lib/radarr"
     ];
   };
-
 }

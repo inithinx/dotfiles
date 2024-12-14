@@ -27,6 +27,11 @@
       timeout = 0;
       systemd-boot.enable = true;
       systemd-boot.consoleMode = "max";
+      systemd-boot.extraInstallCommands = ''
+        if [ ! -d "/persist/etc/secureboot/keys" ]; then
+          sbctl create-keys
+        fi
+      '';
       efi.canTouchEfiVariables = true;
     };
     kernel.sysctl = {

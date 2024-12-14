@@ -11,16 +11,11 @@
     dataDir = "/data/postgresql/";
     ensureDatabases = [
       "nextcloud"
-      "gitlab"
       "secvault"
     ];
     ensureUsers = [
       {
         name = "nextcloud";
-        ensureDBOwnership = true;
-      }
-      {
-        name = "gitlab";
         ensureDBOwnership = true;
       }
       {

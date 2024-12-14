@@ -13,7 +13,7 @@
     };
   };
 
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "nithin";
+  #services.displayManager.autoLogin.enable = true;
+  #services.displayManager.autoLogin.user = "nithin";
 
 }
