@@ -99,7 +99,7 @@ in {
         options = "--delete-older-than 3d";
       };
       settings = {
-        experimental-features = ["nix-command" "flakes"];
+        experimental-features = ["nix-command" "flakes" "recursive-nix"];
         flake-registry = "";
         auto-optimise-store = true;
         # Garbage collection settings
@@ -122,7 +122,7 @@ in {
 
     # Network configuration
     networking = {
-      hostName = cfg.hostname;
+      hostName = config.base.hostname;
       firewall = {
         enable = true;
         allowPing = true;
@@ -141,11 +141,11 @@ in {
     };
 
     # User configuration
-    users.users.${cfg.username} = {
+    users.users.${config.base.username} = {
       isNormalUser = true;
-      hashedPassword = cfg.hashedPassword;
+      hashedPassword = config.base.hashedPassword;
       shell = pkgs.zsh;
-      home = "/home/${cfg.username}";
+      home = "/home/${config.base.username}";
       extraGroups = [
         "wheel"
         "networkmanager"
