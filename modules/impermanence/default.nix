@@ -4,19 +4,29 @@
   impermanence,
   ...
 }:
-with lib; {
+with lib; let
+  # Helper function to create media directories with consistent permissions
+  mkMediaDir = path: {
+    directory = path;
+    user = config.mediastack.user or config.base.username;
+    group = config.mediastack.group or "users";
+  };
+  # Check if proxy should be enabled (mirrors logic from proxy module)
+  #proxyEnabled = config.proxy.enable or (
+  #  config.mediastack.enable or false ||
+  #  config.selfhosted.enable or false
+  #);
+in {
   imports = [
-    #inputs.self.nixosModules.base
     impermanence.nixosModules.impermanence
   ];
 
   options.impermanence = {
     enable = mkOption {
       type = types.bool;
-      default = mkDefault config.base.enable; # Enable by default when base.enable is true
+      default = mkDefault config.base.enable;
       description = "Enable the impermanence module.";
     };
-
     extraDirs = mkOption {
       type = types.listOf types.str;
       default = [];
@@ -37,7 +47,6 @@ with lib; {
           timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
           mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
       fi
-
       delete_subvolume_recursively() {
           IFS=$'\n'
           for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
@@ -45,11 +54,9 @@ with lib; {
           done
           btrfs subvolume delete "$1"
       }
-
       for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
           delete_subvolume_recursively "$i"
       done
-
       btrfs subvolume create /btrfs_tmp/root
       umount /btrfs_tmp
     '';
@@ -58,7 +65,6 @@ with lib; {
     environment.persistence."/persist" = {
       enable = true;
       hideMounts = true;
-
       directories =
         [
           {
@@ -69,35 +75,37 @@ with lib; {
           }
           {
             directory = "/etc/secureboot";
-            #user = "${config.base.username}";
-            #group = "users";
-            #mode = "u=rwx,g=rx,o=";
           }
           {
             directory = "/etc/NetworkManager/system-connections";
-            #user = "${config.base.username}";
-            #group = "users";
-            #mode = "u=rwx,g=rx,o=";
           }
           {
             directory = "/var/log";
-            #user = "${config.base.username}";
-            #group = "users";
-            #mode = "u=rwx,g=rx,o=";
           }
           {
             directory = "/var/lib/nixos";
-            #user = "${config.base.username}";
-            #group = "users";
-            #mode = "u=rwx,g=rx,o=";
           }
           {
             directory = "/var/lib/tailscale";
-            #user = "${config.base.username}";
-            #group = "users";
-            #mode = "u=rwx,g=rx,o=";
           }
         ]
+        # Add proxy directories if proxy is enabled (directly or indirectly)
+        ++ (optionals config.proxy.enable [
+          "/var/lib/acme"
+        ])
+        # Add media stack directories if enabled
+        ++ (optionals (config.mediastack.enable or false) [
+          "/var/lib/docker"
+          {
+            directory = "/var/lib/private";
+            mode = "u=rwx,g=,o=";
+          }
+          (mkMediaDir "/var/lib/deluge")
+          (mkMediaDir "/var/lib/jellyfin")
+          (mkMediaDir "/var/lib/sonarr")
+          (mkMediaDir "/var/lib/radarr")
+          (mkMediaDir "/var/lib/lidarr")
+        ])
         ++ config.impermanence.extraDirs;
 
       files = [
