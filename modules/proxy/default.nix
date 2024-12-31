@@ -4,7 +4,8 @@
   pkgs,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.proxy;
 
   # Script to generate nginx configs at runtime
@@ -53,12 +54,6 @@ with lib; let
       create_vhost "flare" "8191"
     ''}
 
-    # Generate selfhosted configs if enabled
-    ${optionalString (config.selfhosted.enable or false) ''
-      create_vhost "cloud" "8080"
-      create_vhost "git" "3000"
-    ''}
-
     # Create catch-all redirect config
     cat > "/etc/nginx/sites-enabled/catch-all.conf" << EOF
     server {
@@ -75,21 +70,18 @@ with lib; let
     # Test nginx config
     nginx -t && systemctl reload nginx
   '';
-in {
+in
+{
   options.proxy = {
     enable = mkEnableOption "Proxy service";
   };
 
   config = mkIf cfg.enable {
-    # Automatically enable if either mediastack or selfhosted is enabled
-    proxy.enable = mkDefault (
-      config.mediastack.enable
-      or false
-      || config.selfhosted.enable or false
-    );
+    # Automatically enable if mediastack is enabled
+    proxy.enable = mkDefault (config.mediastack.enable or false);
 
     # Nginx user setup
-    users.users.nginx.extraGroups = ["acme"];
+    users.users.nginx.extraGroups = [ "acme" ];
 
     # Nginx service configuration
     services.nginx = {
@@ -112,8 +104,8 @@ in {
     # Systemd service to generate nginx configs
     systemd.services.nginx-config-gen = {
       description = "Generate Nginx configurations";
-      wantedBy = ["nginx.service"];
-      before = ["nginx.service"];
+      wantedBy = [ "nginx.service" ];
+      before = [ "nginx.service" ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;

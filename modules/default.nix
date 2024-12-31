@@ -5,4 +5,5 @@
   proxy = import ./proxy;
   mediastack = import ./mediastack;
   secureboot = import ./secureboot;
+  selfhosted = import ./selfhosted;
 }

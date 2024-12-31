@@ -4,8 +4,9 @@
   inputs,
   ...
 }:
-with lib; {
-  imports = [inputs.nixvim.nixosModules.nixvim];
+with lib;
+{
+  imports = [ inputs.nixvim.nixosModules.nixvim ];
 
   options.editor = {
     enable = mkOption {

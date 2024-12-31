@@ -2,12 +2,14 @@
   config,
   lib,
   pkgs,
-  inputs ? {},
+  inputs ? { },
   ...
 }:
-with lib; let
+with lib;
+let
   flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
-in {
+in
+{
   imports = [
     inputs.disko.nixosModules.default
   ];
@@ -93,13 +95,18 @@ in {
     };
 
     nix = {
+      trustedUsers = [ "${config.base.username}" ];
       gc = {
         automatic = true;
         dates = "weekly";
         options = "--delete-older-than 3d";
       };
       settings = {
-        experimental-features = ["nix-command" "flakes" "recursive-nix"];
+        experimental-features = [
+          "nix-command"
+          "flakes"
+          "recursive-nix"
+        ];
         flake-registry = "";
         auto-optimise-store = true;
         # Garbage collection settings
@@ -109,7 +116,7 @@ in {
       };
 
       channel.enable = false;
-      registry = lib.mapAttrs (_: flake: {inherit flake;}) flakeInputs;
+      registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
       nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
       optimise.automatic = true;
     };
@@ -126,8 +133,8 @@ in {
       firewall = {
         enable = true;
         allowPing = true;
-        allowedTCPPorts = [22];
-        allowedUDPPorts = [];
+        allowedTCPPorts = [ 22 ];
+        allowedUDPPorts = [ ];
       };
       networkmanager.enable = true;
     };
@@ -136,7 +143,7 @@ in {
     console = {
       earlySetup = true;
       font = "${pkgs.terminus_font}/share/consolefonts/ter-116n.psf.gz";
-      packages = with pkgs; [terminus_font];
+      packages = with pkgs; [ terminus_font ];
       keyMap = "us";
     };
 
@@ -176,6 +183,14 @@ in {
       neovim.vimAlias = true;
       dconf.enable = true;
       command-not-found.enable = true;
+      direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+        config.global = {
+          # Make direnv output less shit.
+          hide_env_diff = true;
+        };
+      };
     };
 
     # System packages

@@ -1,4 +1,5 @@
-{inputs, ...}: {
+{ inputs, ... }:
+{
   # You can import other NixOS modules here
   imports = [
     inputs.self.nixosModules.base

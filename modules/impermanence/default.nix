@@ -4,19 +4,21 @@
   impermanence,
   ...
 }:
-with lib; let
+with lib;
+let
   # Helper function to create media directories with consistent permissions
   mkMediaDir = path: {
     directory = path;
     user = config.mediastack.user or config.base.username;
     group = config.mediastack.group or "users";
   };
-  # Check if proxy should be enabled (mirrors logic from proxy module)
-  #proxyEnabled = config.proxy.enable or (
-  #  config.mediastack.enable or false ||
-  #  config.selfhosted.enable or false
-  #);
-in {
+in
+# Check if proxy should be enabled (mirrors logic from proxy module)
+#proxyEnabled = config.proxy.enable or (
+#  config.mediastack.enable or false ||
+#  config.selfhosted.enable or false
+#);
+{
   imports = [
     impermanence.nixosModules.impermanence
   ];
@@ -29,7 +31,7 @@ in {
     };
     extraDirs = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       description = "Additional directories to persist.";
     };
   };
@@ -120,7 +122,7 @@ in {
       users.${config.base.username} = {
         directories = [
           ".ssh"
-          "." #TODO this just persists the entire home directory. this is not good, this is temp. make sure to use the home manager module to persist home stuff, then remove this.
+          "." # TODO this just persists the entire home directory. this is not good, this is temp. make sure to use the home manager module to persist home stuff, then remove this.
         ];
       };
     };

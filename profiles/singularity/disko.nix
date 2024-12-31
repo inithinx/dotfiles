@@ -21,7 +21,7 @@
             name = "nix";
             content = {
               type = "btrfs";
-              extraArgs = ["-f"];
+              extraArgs = [ "-f" ];
               subvolumes = {
                 "/nix" = {
                   mountpoint = "/nix";

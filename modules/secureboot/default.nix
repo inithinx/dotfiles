@@ -3,7 +3,8 @@
   lib,
   ...
 }:
-with lib; {
+with lib;
+{
   options.secureboot = {
     enable = mkOption {
       type = types.bool;
@@ -15,7 +16,7 @@ with lib; {
     inputs.lanzaboote.nixosModules.lanzaboote
   ];
   config = mkIf config.secureboot.enable {
-    environment.systemPackages = [pkgs.sbctl];
+    environment.systemPackages = [ pkgs.sbctl ];
     boot.loader.systemd-boot.enable = mkForce false;
     boot.lanzaboote = {
       enable = true;
