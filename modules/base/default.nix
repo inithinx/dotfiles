@@ -47,7 +47,7 @@ in
         "page_alloc.shuffle=1" # Memory management performance
       ];
       initrd = {
-        systemd.enable = true;
+        #systemd.enable = true;
         verbose = false;
       };
       loader = {
