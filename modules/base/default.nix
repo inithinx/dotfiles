@@ -12,6 +12,8 @@ in
 {
   imports = [
     inputs.disko.nixosModules.default
+    inputs.self.nixosModules.secureboot
+    inputs.self.nixosModules.impermanence
   ];
   options.base = {
     enable = mkEnableOption "Enable base system configuration";
@@ -161,7 +163,6 @@ in
         "input"
         "docker"
         "libvirtd"
-        "adbusers"
       ];
     };
 
@@ -174,7 +175,6 @@ in
         syntaxHighlighting.enable = true;
         autosuggestions.enable = true;
         shellAliases = {
-          cd = "z";
           cat = "bat --color=auto";
           grep = "grep --color=auto";
           v = "nvim";
