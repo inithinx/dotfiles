@@ -1,7 +1,7 @@
 {
+  inputs,
   config,
   lib,
-  impermanence,
   ...
 }:
 with lib;
@@ -20,7 +20,8 @@ in
 #);
 {
   imports = [
-    impermanence.nixosModules.impermanence
+    inputs.impermanence.nixosModules.impermanence
+    inputs.disko.nixosModules.default
   ];
 
   options.impermanence = {
@@ -43,7 +44,7 @@ in
     # Wipe root on boot
     boot.initrd.postDeviceCommands = lib.mkAfter ''
       mkdir /btrfs_tmp
-      mount ${config.disko.devices.disk.main}/root /btrfs_tmp
+      mount ${config.disko.devices.disk.main.device}/root /btrfs_tmp
       if [[ -e /btrfs_tmp/root ]]; then
           mkdir -p /btrfs_tmp/old_roots
           timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
@@ -76,7 +77,7 @@ in
             mode = "u=rwx,g=rx,o=";
           }
           {
-            directory = "/etc/secureboot";
+            directory = "/var/lib/sbctl";
           }
           {
             directory = "/etc/NetworkManager/system-connections";
@@ -92,22 +93,22 @@ in
           }
         ]
         # Add proxy directories if proxy is enabled (directly or indirectly)
-        ++ (optionals config.proxy.enable [
-          "/var/lib/acme"
-        ])
+        #++ (optionals config.proxy.enable [
+        #  "/var/lib/acme"
+        #])
         # Add media stack directories if enabled
-        ++ (optionals (config.mediastack.enable or false) [
-          "/var/lib/docker"
-          {
-            directory = "/var/lib/private";
-            mode = "u=rwx,g=,o=";
-          }
-          (mkMediaDir "/var/lib/deluge")
-          (mkMediaDir "/var/lib/jellyfin")
-          (mkMediaDir "/var/lib/sonarr")
-          (mkMediaDir "/var/lib/radarr")
-          (mkMediaDir "/var/lib/lidarr")
-        ])
+        #++ (optionals (config.mediastack.enable or false) [
+        #  "/var/lib/docker"
+        #  {
+        #    directory = "/var/lib/private";
+        #    mode = "u=rwx,g=,o=";
+        #  }
+        #  (mkMediaDir "/var/lib/deluge")
+        #  (mkMediaDir "/var/lib/jellyfin")
+        #  (mkMediaDir "/var/lib/sonarr")
+        #  (mkMediaDir "/var/lib/radarr")
+        #  (mkMediaDir "/var/lib/lidarr")
+        #])
         ++ config.impermanence.extraDirs;
 
       files = [
@@ -118,13 +119,14 @@ in
         "/etc/ssh/ssh_host_rsa_key.pub"
       ];
 
-      users.${config.base.username}.home = "/home/${config.base.username}";
       users.${config.base.username} = {
+        home = "/home/${config.base.username}";
         directories = [
           ".ssh"
-          "." # TODO this just persists the entire home directory. this is not good, this is temp. make sure to use the home manager module to persist home stuff, then remove this.
+          "." # As you noted in the comment, this is temporary
         ];
       };
+
     };
 
     # Ensure Fuse works for mounted directories

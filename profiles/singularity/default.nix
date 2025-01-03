@@ -4,8 +4,8 @@
   imports = [
     inputs.self.nixosModules.base
     inputs.self.nixosModules.editor
-    inputs.self.nixosModules.mediastack
-    inputs.self.nixosModules.selfhosted
+    #inputs.self.nixosModules.mediastack
+    #inputs.self.nixosModules.selfhosted
 
     ./disko.nix
   ];
@@ -23,15 +23,15 @@
   };
 
   # Set up the arr* stack.
-  mediastack.enable = true;
+  #mediastack.enable = true;
   # Set up selfhosted stack, which is maddy, postgres and nextcloud.
-  selfhosted = {
-    enable = true;
-    domain = config.age.secrets.domain.path;
-    mail.brevo = {
-      user = config.age.secrets.brevo-user.path;
-      passwordFile = config.age.secrets.brevo-password.path;
-    };
-  };
+  #selfhosted = {
+  #  enable = true;
+  #  domain = config.age.secrets.domain.path;
+  #  mail.brevo = {
+  #    user = config.age.secrets.brevo-user.path;
+  #    passwordFile = config.age.secrets.brevo-password.path;
+  #  };
+  #};
 
 }

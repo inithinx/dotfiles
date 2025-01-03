@@ -3,7 +3,9 @@
   editor = import ./editor;
   impermanence = import ./impermanence;
   proxy = import ./proxy;
-  mediastack = import ./mediastack;
+  #k3svm = import ./k3svm;
+  #mediastack = import ./mediastack;
+  #secrets = import ./secrets;
   secureboot = import ./secureboot;
-  selfhosted = import ./selfhosted;
+  #selfhosted = import ./selfhosted;
 }

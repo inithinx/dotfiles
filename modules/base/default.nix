@@ -95,13 +95,13 @@ in
     };
 
     nix = {
-      trustedUsers = [ "${config.base.username}" ];
       gc = {
         automatic = true;
         dates = "weekly";
         options = "--delete-older-than 3d";
       };
       settings = {
+        trusted-users = [ "${config.base.username}" ];
         experimental-features = [
           "nix-command"
           "flakes"
@@ -186,10 +186,6 @@ in
       direnv = {
         enable = true;
         nix-direnv.enable = true;
-        config.global = {
-          # Make direnv output less shit.
-          hide_env_diff = true;
-        };
       };
     };
 
@@ -234,6 +230,7 @@ in
         parted
         gptfdisk
         cryptsetup
+        sbctl
       ];
 
       variables = {
