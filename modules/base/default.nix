@@ -55,18 +55,13 @@ in
         systemd-boot = {
           enable = true;
           consoleMode = "max";
-          extraInstallCommands = ''
-            if [ ! -d "/persist/etc/secureboot/keys" ]; then
-              sbctl create-keys
-            fi
-          '';
         };
         efi.canTouchEfiVariables = true;
       };
-      plymouth = {
-        enable = true;
-        theme = "bgrt";
-      };
+      #plymouth = {
+      #  enable = true;
+      #  theme = "bgrt";
+      #};
     };
 
     # System hardening

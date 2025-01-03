@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  config,
   ...
 }:
 with lib;
@@ -20,7 +21,7 @@ with lib;
     boot.loader.systemd-boot.enable = mkForce false;
     boot.lanzaboote = {
       enable = true;
-      pkiBundle = "/etc/secureboot";
+      pkiBundle = "/var/lib/sbctl";
     };
   };
 }
