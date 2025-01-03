@@ -4,6 +4,7 @@
   imports = [
     inputs.self.nixosModules.base
     inputs.self.nixosModules.editor
+    inputs.self.nixosModules.k3svm
     #inputs.self.nixosModules.mediastack
     #inputs.self.nixosModules.selfhosted
 
