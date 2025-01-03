@@ -27,7 +27,7 @@ in
   options.impermanence = {
     enable = mkOption {
       type = types.bool;
-      default = mkDefault config.base.enable;
+      default = config.base.enable;
       description = "Enable the impermanence module.";
     };
     extraDirs = mkOption {
