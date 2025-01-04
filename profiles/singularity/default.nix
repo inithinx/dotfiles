@@ -25,7 +25,7 @@
 
   # K3sVM
   k3svm = {
-    enable = true;
+    enable = false;
     numberOfVMs = 3;
     cpusPerVM = 4;
     memoryPerVM = 4096;

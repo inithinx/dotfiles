@@ -81,6 +81,12 @@
             ];
           };
 
+          users.users.test = {
+            isNormalUser = true;
+            initialPassword = "test"; # Note: This is insecure for production!
+            description = "Test user for microVMs";
+            extraGroups = [ "wheel" ]; # Optional: Grants sudo privileges.
+          };
           services.k3s = {
             enable = true;
             role = "server";
@@ -132,7 +138,7 @@
               interface = "eth0";
             };
             firewall = {
-              enable = true;
+              enable = false;
               allowedTCPPorts = [
                 22 # SSH
                 6443 # Kubernetes API
