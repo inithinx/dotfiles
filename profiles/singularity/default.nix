@@ -23,6 +23,15 @@
     enable = true;
   };
 
+  # K3sVM
+  k3svm = {
+    enable = true;
+    numberOfVMs = 3;
+    cpusPerVM = 4;
+    memoryPerVM = 4096;
+    storagePerVM = 25600;
+  };
+
   # Set up the arr* stack.
   #mediastack.enable = true;
   # Set up selfhosted stack, which is maddy, postgres and nextcloud.

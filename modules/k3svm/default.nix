@@ -1,56 +1,172 @@
 {
+  inputs,
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
-with lib;
+
 {
   imports = [
     inputs.microvm.nixosModules.host
   ];
 
-  # Fixes for longhorn
-  systemd.tmpfiles.rules = [
-    "L+ /usr/local/bin - - - - /run/current-system/sw/bin/"
-  ];
+  options.k3svm = with lib; {
+    enable = mkEnableOption "k3s microvm cluster";
 
-  virtualisation.docker.logDriver = "json-file";
+    numberOfVMs = mkOption {
+      type = types.int;
+      default = 3;
+      description = "Number of VMs to create for the k3s cluster";
+    };
 
-  services.k3s = {
-    enable = true;
-    role = "server";
-    tokenFile = /var/lib/rancher/k3s/server/token;
-    extraFlags = toString (
-      [
-        "--write-kubeconfig-mode \"0644\""
-        "--cluster-init"
-        "--disable local-storage"
-      ]
-      ++ (
-        if config.k3svm.hostname == "prod-node-1" then
-          [ ]
-        else
-          [
-            "--server https://10.0.0.10:6443"
-          ]
-      )
+    cpusPerVM = mkOption {
+      type = types.int;
+      default = 4;
+      description = "Number of CPUs per VM";
+    };
+
+    memoryPerVM = mkOption {
+      type = types.int;
+      default = 4096;
+      description = "Memory in MB per VM";
+    };
+
+    storagePerVM = mkOption {
+      type = types.int;
+      default = 25600;
+      description = "Storage size in MB per VM";
+    };
+  };
+
+  config = lib.mkIf config.k3svm.enable {
+    microvm.vms = lib.genAttrs (map (n: "prod-${toString n}") (lib.range 1 config.k3svm.numberOfVMs)) (
+      name:
+      let
+        vmNumber = lib.toInt (lib.last (lib.splitString "-" name));
+      in
+      {
+        config = {
+          microvm = {
+            hypervisor = "qemu";
+            vcpu = config.k3svm.cpusPerVM;
+            mem = config.k3svm.memoryPerVM;
+            volumes = [
+              {
+                image = "/media/microvms/${name}.img";
+                size = config.k3svm.storagePerVM;
+                autoCreate = true;
+                fsType = "ext4";
+                mountPoint = "/";
+              }
+            ];
+            #shares = [
+            #  {
+            #    tag = "nixstore";
+            #    source = "/nix/store";
+            #    mountPoint = "/nix/.ro-store";
+            #    proto = "virtiofs";
+            #  }
+            #];
+            #writableStoreOverlay = "/nix/.rw-store";
+            interfaces = [
+              {
+                id = name; # Use the VM name as the interface ID
+                type = "bridge";
+                bridge = "br0";
+                mac = "52:54:00:${builtins.substring 0 2 (builtins.hashString "sha256" name)}:${
+                  builtins.substring 2 2 (builtins.hashString "sha256" name)
+                }:${builtins.substring 4 2 (builtins.hashString "sha256" name)}";
+              }
+            ];
+          };
+
+          services.k3s = {
+            enable = true;
+            role = "server";
+            tokenFile = "/var/lib/rancher/k3s/server/token";
+            extraFlags = toString (
+              [
+                "--write-kubeconfig-mode \"0644\""
+                "--disable local-storage"
+              ]
+              ++ (if vmNumber == 1 then [ "--cluster-init" ] else [ "--server https://10.0.0.10:6443" ])
+            );
+            clusterInit = (vmNumber == 1);
+          };
+
+          services.openiscsi = {
+            enable = true;
+            name = "iqn.2016-04.com.open-iscsi:${name}";
+          };
+
+          environment.systemPackages = with pkgs; [
+            neovim
+            k3s
+            cifs-utils
+            nfs-utils
+            git
+            htop
+            iptables
+            curl
+            wget
+          ];
+
+          boot.kernelParams = [
+            "console=ttyS0"
+            "panic=1"
+            "boot.panic_on_fail"
+            "net.ifnames=0"
+          ];
+
+          services.openssh.enable = true;
+
+          networking = {
+            useDHCP = false; # Disable global DHCP
+            networkmanager.enable = false; # Disable NetworkManager
+            interfaces.eth0 = {
+              useDHCP = true; # Enable DHCP just for eth0
+            };
+            defaultGateway = {
+              address = "10.0.0.1";
+              interface = "eth0";
+            };
+            firewall = {
+              enable = true;
+              allowedTCPPorts = [
+                22 # SSH
+                6443 # Kubernetes API
+                10250 # Kubelet
+                2379 # etcd client
+                2380 # etcd peer
+              ];
+            };
+          };
+
+        };
+      }
     );
-    clusterInit = (config.k3svm.hostname == "prod-node-1");
+
+    # Host system configuration
+    systemd.services.prepare-microvm-storage = {
+      description = "Prepare storage directory for MicroVMs";
+      wantedBy = [ "multi-user.target" ];
+      script = ''
+        mkdir -p /media/microvms
+        chown microvm:microvm /media/microvms
+        chmod 755 /media/microvms
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+    };
+
+    users.users.microvm = {
+      isSystemUser = true;
+      description = "MicroVM user";
+    };
+
+    users.groups.microvm = { };
   };
-
-  services.openiscsi = {
-    enable = true;
-    name = "iqn.2016-04.com.open-iscsi:${config.k3svm.hostname}";
-  };
-
-  environment.systemPackages = with pkgs; [
-    neovim
-    k3s
-    cifs-utils
-    nfs-utils
-    git
-  ];
-
 }
