@@ -5,117 +5,154 @@
   ...
 }:
 with lib;
-let
-  cfg = config.proxy;
-
-  # Script to generate nginx configs at runtime
-  nginxConfigScript = pkgs.writeShellScript "generate-nginx-config" ''
-    # Read domains from agenix secret files
-    MAIN_DOMAIN=$(cat ${config.age.secrets.domain.path})
-    PERSONAL_DOMAIN=$(cat ${config.age.secrets.personaldomain.path})
-
-    # Create nginx config directory if it doesn't exist
-    mkdir -p /etc/nginx/sites-enabled
-
-    # Function to create a virtual host config
-    create_vhost() {
-      local subdomain=$1
-      local port=$2
-      cat > "/etc/nginx/sites-enabled/$subdomain.conf" << EOF
-    server {
-      listen 443 ssl http2;
-      server_name $subdomain.$MAIN_DOMAIN;
-
-      ssl_certificate /var/lib/acme/$MAIN_DOMAIN/fullchain.pem;
-      ssl_certificate_key /var/lib/acme/$MAIN_DOMAIN/key.pem;
-
-      location / {
-        proxy_pass http://127.0.0.1:$port/;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-      }
-    }
-    EOF
-    }
-
-    # Generate media stack configs if enabled
-    ${optionalString (config.mediastack.enable or false) ''
-      create_vhost "sonarr" "8989"
-      create_vhost "radarr" "7878"
-      create_vhost "prowlarr" "9696"
-      create_vhost "jellyfin" "8096"
-      create_vhost "media" "8096"
-      create_vhost "jellyseerr" "5055"
-      create_vhost "request" "5055"
-      create_vhost "deluge" "8112"
-      create_vhost "flare" "8191"
-    ''}
-
-    # Create catch-all redirect config
-    cat > "/etc/nginx/sites-enabled/catch-all.conf" << EOF
-    server {
-      listen 443 ssl http2;
-      server_name *.$MAIN_DOMAIN;
-
-      ssl_certificate /var/lib/acme/$MAIN_DOMAIN/fullchain.pem;
-      ssl_certificate_key /var/lib/acme/$MAIN_DOMAIN/key.pem;
-
-      return 301 https://$PERSONAL_DOMAIN\$request_uri;
-    }
-    EOF
-
-    # Test nginx config
-    nginx -t && systemctl reload nginx
-  '';
-in
 {
-  options.proxy = {
-    enable = mkEnableOption "Proxy service";
+  #imports = [
+  #  inputs.self.nixosModules.mediastack
+  #  inputs.self.nixosModules.selfhosted
+  #];
+  options = {
+    proxy = {
+      enable = mkEnableOption "Enables nginx and ACME for fast, https reverse proxy.";
+      default = true;
+    };
   };
-
-  config = mkIf cfg.enable {
-    # Automatically enable if mediastack is enabled
-    proxy.enable = mkDefault (config.mediastack.enable or false);
-
-    # Nginx user setup
-    users.users.nginx.extraGroups = [ "acme" ];
-
-    # Nginx service configuration
+  config = mkIf config.proxy.enable {
+    # Nginx
     services.nginx = {
       enable = true;
       package = pkgs.nginxQuic;
 
-      # Security and optimization settings
+      # Recommended settings
       recommendedGzipSettings = true;
       recommendedOptimisation = true;
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
-      sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
 
-      # Use include directive for dynamic configs
-      appendConfig = ''
-        include /etc/nginx/sites-enabled/*.conf;
-      '';
+      virtualHosts = mkMerge [
+        # Main domain redirect
+        {
+          "${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              return = "301 https://${config.age.secrets.personaldomain.path}$request_uri";
+            };
+          };
+
+          # Catch-all redirect for unused subdomains
+          "~^(?<subdomain>.+)\.${config.age.secrets.domain.path}$" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              return = "301 https://${config.age.secrets.personaldomain.path}$request_uri";
+            };
+            priority = 999; # Lower priority than specific service hosts
+          };
+        }
+
+        # Mediastack services (conditionally included)
+        (mkIf config.mediastack.enable {
+          # Jellyfin
+          "jellyfin.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:8096";
+              proxyWebsockets = true;
+            };
+          };
+
+          # Sonarr
+          "sonarr.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:8989";
+              proxyWebsockets = true;
+            };
+          };
+
+          # Radarr
+          "radarr.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:7878";
+              proxyWebsockets = true;
+            };
+          };
+
+          # Lidarr
+          "lidarr.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:8686";
+              proxyWebsockets = true;
+            };
+          };
+
+          # Prowlarr
+          "prowlarr.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:9696";
+              proxyWebsockets = true;
+            };
+          };
+
+          # Jellyseerr
+          "jellyseerr.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:5055";
+              proxyWebsockets = true;
+            };
+          };
+
+          # Deluge
+          "deluge.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:8112";
+              proxyWebsockets = true;
+            };
+          };
+
+          # FlareSolverr
+          "flaresolverr.${config.age.secrets.domain.path}" = {
+            forceSSL = true;
+            useACMEHost = "primary-domain";
+            locations."/" = {
+              proxyPass = "http://127.0.0.1:8191";
+              proxyWebsockets = true;
+            };
+          };
+        })
+      ];
     };
 
-    # Systemd service to generate nginx configs
-    systemd.services.nginx-config-gen = {
-      description = "Generate Nginx configurations";
-      wantedBy = [ "nginx.service" ];
-      before = [ "nginx.service" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        ExecStart = nginxConfigScript;
+    # ACME
+    security.acme = {
+      acceptTerms = true;
+      defaults = {
+        email = "${config.base.username}@${config.age.secrets.domain.path}";
+        #server = "https://acme-v02.api.letsencrypt.org/directory"; # Changed to production
+        reloadServices = [ "nginx" ];
+        environmentFile = config.age.secrets.cloudflare.path;
+        dnsProvider = "cloudflare";
+        dnsResolver = "1.1.1.1:53";
       };
-      # Ensure the service runs when secrets change
-      reloadTriggers = [
-        config.age.secrets.domain.path
-        config.age.secrets.personaldomain.path
-      ];
+      certs."primary-domain" = {
+        domain = "*.${config.age.secrets.domain.path}";
+        extraDomainNames = [
+          config.age.secrets.domain.path
+        ];
+        dnsProvider = "cloudflare";
+      };
     };
   };
 }

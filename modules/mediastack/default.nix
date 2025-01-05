@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 with lib;
@@ -14,7 +13,7 @@ in
 
     user = mkOption {
       type = types.str;
-      default = "nithin";
+      default = "${config.base.username}";
       description = "User under which media services will run";
     };
 
