@@ -88,7 +88,6 @@ in
     # FlareSolverr container configuration
     virtualisation.oci-containers = {
       backend = "docker";
-      enable = true;
       containers.flaresolverr = {
         image = "ghcr.io/flaresolverr/flaresolverr:latest";
         autoStart = true;

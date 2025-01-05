@@ -5,7 +5,7 @@
     inputs.self.nixosModules.base
     inputs.self.nixosModules.editor
     inputs.self.nixosModules.k3svm
-    #inputs.self.nixosModules.mediastack
+    inputs.self.nixosModules.mediastack
     #inputs.self.nixosModules.selfhosted
 
     ./disko.nix
@@ -33,7 +33,8 @@
   };
 
   # Set up the arr* stack.
-  #mediastack.enable = true;
+  mediastack.enable = true;
+
   # Set up selfhosted stack, which is maddy, postgres and nextcloud.
   #selfhosted = {
   #  enable = true;

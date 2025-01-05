@@ -60,15 +60,15 @@
                 mountPoint = "/";
               }
             ];
-            #shares = [
-            #  {
-            #    tag = "nixstore";
-            #    source = "/nix/store";
-            #    mountPoint = "/nix/.ro-store";
-            #    proto = "virtiofs";
-            #  }
-            #];
-            #writableStoreOverlay = "/nix/.rw-store";
+            shares = [
+              {
+                tag = "nixstore";
+                source = "/nix/store";
+                mountPoint = "/nix/.ro-store";
+                proto = "virtiofs";
+              }
+            ];
+            writableStoreOverlay = "/nix/.rw-store";
             interfaces = [
               {
                 id = name; # Use the VM name as the interface ID
@@ -81,9 +81,9 @@
             ];
           };
 
-          users.users.test = {
+          users.users.${name} = {
             isNormalUser = true;
-            initialPassword = "test"; # Note: This is insecure for production!
+            initialPassword = "${name}"; # Note: This is insecure for production!
             description = "Test user for microVMs";
             extraGroups = [ "wheel" ]; # Optional: Grants sudo privileges.
           };
@@ -96,11 +96,12 @@
                 "--write-kubeconfig-mode \"0644\""
                 "--disable local-storage"
               ]
-              ++ (if vmNumber == 1 then [ "--cluster-init" ] else [ "--server https://10.0.0.10:6443" ])
+              ++ (if vmNumber == 1 then [ "--cluster-init" ] else [ "--server https://10.0.0.51:6443" ])
             );
             clusterInit = (vmNumber == 1);
           };
 
+          services.tailscale.enable = true;
           services.openiscsi = {
             enable = true;
             name = "iqn.2016-04.com.open-iscsi:${name}";
@@ -127,9 +128,8 @@
 
           services.openssh.enable = true;
 
+          system.stateVersion = "24.11";
           networking = {
-            useDHCP = false; # Disable global DHCP
-            networkmanager.enable = false; # Disable NetworkManager
             interfaces.eth0 = {
               useDHCP = true; # Enable DHCP just for eth0
             };
@@ -138,13 +138,15 @@
               interface = "eth0";
             };
             firewall = {
-              enable = false;
+              enable = true;
               allowedTCPPorts = [
                 22 # SSH
                 6443 # Kubernetes API
                 10250 # Kubelet
                 2379 # etcd client
                 2380 # etcd peer
+                80 # Http
+                443 # Https
               ];
             };
           };
@@ -174,5 +176,6 @@
     };
 
     users.groups.microvm = { };
+
   };
 }
