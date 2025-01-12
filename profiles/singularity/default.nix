@@ -34,8 +34,8 @@
   };
 
   # Set up the arr* stack.
-  mediastack.enable = true;
-  proxy.enable = true;
+  mediastack.enable = false;
+  proxy.enable = false;
 
   # Set up selfhosted stack, which is maddy, postgres and nextcloud.
   #selfhosted = {
