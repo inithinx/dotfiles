@@ -12,7 +12,7 @@
     enable = true;
     hostname = "pathfinder";
     username = "nithin";
-    hashedPassword = ""; # TODO
+    hashedPassword = "$6$rounds=100000$4VD6TDybh7XM/EUo$EzFPmJENWRfFIqSkc7ZhMuwKZo5XFE0jeHE6hD6qiVvwM6aoGUv3tnDT0PPbDhT8yn/fyHYiP..UeGnSA/Q3r0"; 
   };
   editor = {
     enable = true;

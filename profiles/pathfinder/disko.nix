@@ -1,7 +1,7 @@
 {
   disko.devices = {
     disk.main = {
-      device = "";
+      device = "/dev/disk/by-id/nvme-CT500P1SSD8_2033E4A98CDD";
       type = "disk";
       content = {
         type = "gpt";
