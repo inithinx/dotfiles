@@ -4,9 +4,8 @@
   inputs,
   ...
 }:
-with lib;
-{
-  imports = [ inputs.nixvim.nixosModules.nixvim ];
+with lib; {
+  imports = [inputs.nixvim.nixosModules.nixvim];
 
   options.editor = {
     enable = mkOption {
@@ -19,6 +18,7 @@ with lib;
   config = mkIf config.editor.enable {
     programs.nixvim = {
       enable = true;
+      performance.combinePlugins.enable = true;
       # Theme
       colorschemes.catppuccin.enable = true;
 

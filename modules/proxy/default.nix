@@ -4,8 +4,7 @@
   pkgs,
   ...
 }:
-with lib;
-{
+with lib; {
   #imports = [
   #  inputs.self.nixosModules.mediastack
   #  inputs.self.nixosModules.selfhosted
@@ -141,7 +140,7 @@ with lib;
       defaults = {
         email = "${config.base.username}@${config.age.secrets.domain.path}";
         #server = "https://acme-v02.api.letsencrypt.org/directory"; # Changed to production
-        reloadServices = [ "nginx" ];
+        reloadServices = ["nginx"];
         environmentFile = config.age.secrets.cloudflare.path;
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";

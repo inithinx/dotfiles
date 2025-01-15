@@ -4,9 +4,7 @@
   lib,
   pkgs,
   ...
-}:
-
-{
+}: {
   imports = [
     inputs.microvm.nixosModules.host
   ];
@@ -37,15 +35,19 @@
       default = 25600;
       description = "Storage size in MB per VM";
     };
+
+    bridgehosts = mkOption {
+      type = types.listOf types.str;
+      default = [];
+      description = "List of host network interfaces to bridge to the VMs";
+    };
   };
 
   config = lib.mkIf config.k3svm.enable {
     microvm.vms = lib.genAttrs (map (n: "prod-${toString n}") (lib.range 1 config.k3svm.numberOfVMs)) (
-      name:
-      let
+      name: let
         vmNumber = lib.toInt (lib.last (lib.splitString "-" name));
-      in
-      {
+      in {
         config = {
           microvm = {
             hypervisor = "qemu";
@@ -85,7 +87,7 @@
             isNormalUser = true;
             initialPassword = "${name}"; # Note: This is insecure for production!
             description = "Test user for microVMs";
-            extraGroups = [ "wheel" ]; # Optional: Grants sudo privileges.
+            extraGroups = ["wheel"]; # Optional: Grants sudo privileges.
           };
           services.k3s = {
             enable = true;
@@ -96,9 +98,13 @@
                 "--write-kubeconfig-mode \"0644\""
                 "--disable local-storage"
               ]
-              ++ (if vmNumber == 1 then [ "--cluster-init" ] else [ "--server https://10.0.0.51:6443" ])
+              ++ (
+                if vmNumber == 1
+                then ["--cluster-init"]
+                else ["--server https://10.0.0.51:6443"]
+              )
             );
-            clusterInit = (vmNumber == 1);
+            clusterInit = vmNumber == 1;
           };
 
           services.tailscale.enable = true;
@@ -150,7 +156,6 @@
               ];
             };
           };
-
         };
       }
     );
@@ -158,7 +163,7 @@
     # Host system configuration
     systemd.services.prepare-microvm-storage = {
       description = "Prepare storage directory for MicroVMs";
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
       script = ''
         mkdir -p /media/microvms
         chown microvm:microvm /media/microvms
@@ -170,12 +175,13 @@
       };
     };
 
+    networking.bridges."br0".interfaces = config.k3svm.bridgehosts;
+
     users.users.microvm = {
       isSystemUser = true;
       description = "MicroVM user";
     };
 
-    users.groups.microvm = { };
-
+    users.groups.microvm = {};
   };
 }

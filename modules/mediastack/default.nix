@@ -3,11 +3,9 @@
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.mediastack;
-in
-{
+in {
   options.mediastack = {
     enable = mkEnableOption "Media server stack";
 
@@ -90,7 +88,7 @@ in
       containers.flaresolverr = {
         image = "ghcr.io/flaresolverr/flaresolverr:latest";
         autoStart = true;
-        ports = [ "127.0.0.1:8191:8191" ];
+        ports = ["127.0.0.1:8191:8191"];
         environment = {
           LOG_LEVEL = "warning";
           LOG_HTML = "false";

@@ -1,5 +1,4 @@
-{ inputs, ... }:
-{
+{inputs, ...}: {
   # You can import other NixOS modules here
   imports = [
     inputs.self.nixosModules.base
@@ -31,6 +30,7 @@
     cpusPerVM = 4;
     memoryPerVM = 4096;
     storagePerVM = 25600;
+    bridgehosts = ["enp7s0"];
   };
 
   # Set up the arr* stack.
@@ -46,5 +46,4 @@
   #    passwordFile = config.age.secrets.brevo-password.path;
   #  };
   #};
-
 }

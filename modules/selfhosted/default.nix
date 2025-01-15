@@ -5,12 +5,10 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   # Helper function to generate email addresses
   makeEmail = user: domain: "${user}@${domain}";
-in
-{
+in {
   options.selfhosted = {
     enable = mkEnableOption "Enable selfhosted services stack";
 
@@ -162,7 +160,7 @@ in
       };
       aliasGroups.nextcloud = {
         host = "${config.selfhosted.nextcloud.subdomain}.${config.selfhosted.domain}";
-        aliases = [ "nextcloud\\.${config.selfhosted.domain}" ];
+        aliases = ["nextcloud\\.${config.selfhosted.domain}"];
       };
     };
 
@@ -242,13 +240,13 @@ in
     # Integration between Nextcloud and mail
     services.nextcloud.settings =
       mkIf (config.selfhosted.nextcloud.enable && config.selfhosted.mail.enable)
-        {
-          mail_from_address = "nextcloud";
-          mail_domain = config.selfhosted.domain;
-          mail_smtpmode = "smtp";
-          mail_smtphost = "localhost";
-          mail_smtpport = 587;
-        };
+      {
+        mail_from_address = "nextcloud";
+        mail_domain = config.selfhosted.domain;
+        mail_smtpmode = "smtp";
+        mail_smtphost = "localhost";
+        mail_smtpport = 587;
+      };
 
     # Ensure required directories exist and have correct permissions
     systemd.tmpfiles.rules = [
