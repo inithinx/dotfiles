@@ -107,7 +107,6 @@ in {
         flake-registry = "";
         auto-optimise-store = true;
         # Garbage collection settings
-
         keep-outputs = true;
         keep-derivations = true;
       };
@@ -164,7 +163,6 @@ in {
     };
 
     # Program configurations
-
     programs = {
       zsh = {
         enable = true;
@@ -183,7 +181,7 @@ in {
         enable = true;
         settings = {
           format = ''
-            [](surface0)$os$username[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$c$rust$golang$nodejs$php$java$kotlin$haskell$python[](fg:teal bg:blue)$docker_context[](fg:blue bg:purple)$time[ ](fg:purple)$line_break$character'';
+            [](surface0)$os$username[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$direnv[](fg:teal bg:blue)$docker_context[](fg:blue bg:flamingo)$time[ ](fg:flamingo)$line_break$character'';
 
           palette = "catppuccin_mocha";
 
@@ -223,24 +221,9 @@ in {
             style = "bg:surface0 fg:text";
             symbols = {
               Windows = "󰍲";
-              Ubuntu = "󰕈";
-              SUSE = "";
-              Raspbian = "󰐿";
-              Mint = "󰣭";
               Macos = "";
-              Manjaro = "";
               Linux = "󰌽";
-              Gentoo = "󰣨";
-              Fedora = "󰣛";
-              Alpine = "";
-              Amazon = "";
-              Android = "";
-              Arch = "󰣇";
-              Artix = "󰣇";
-              CentOS = "";
               Debian = "󰣚";
-              Redhat = "󱄛";
-              RedHatEnterprise = "󱄛";
             };
           };
 
@@ -260,8 +243,8 @@ in {
               Documents = "󰈙 ";
               Downloads = " ";
               Music = "󰝚 ";
-              Pictures = " ";
-              Developer = "󰲋 ";
+              Pictures = "";
+              Templates = " ";
             };
           };
 
@@ -276,62 +259,16 @@ in {
             format = "[[($all_status$ahead_behind )](fg:base bg:green)]($style)";
           };
 
-          nodejs = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          c = {
-            symbol = " ";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          rust = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          golang = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          php = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          java = {
-            symbol = " ";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          kotlin = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          haskell = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
-          };
-
-          python = {
-            symbol = "";
-            style = "bg:teal";
-            format = "[[ $symbol( $version) ](fg:base bg:teal)]($style)";
+          direnv = {
+            disabled = false;
+            detect_env_vars = [".envrc"];
+            format = "[$symbol$loaded]($style)";
+            symbol = "󰉋 ";
+            style = "fg:base bg:teal";
           };
 
           docker_context = {
-            symbol = "";
+            symbol = " ";
             style = "bg:mantle";
             format = "[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)";
           };
@@ -445,6 +382,7 @@ in {
         };
       };
     };
+
     # Enable systemd-ooomd
     systemd.oomd = {
       enable = true;
