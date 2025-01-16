@@ -228,34 +228,6 @@ in {
         gptfdisk
         cryptsetup
         sbctl
-
-        # Security tools
-
-        tcpdump
-        nikto
-        wordlists
-        wpscan
-        rustscan
-        hashcat
-        netcat
-        ffuf
-        dirb
-        httpie
-        sqlmap
-        whatweb
-        radare2
-        pwntools
-        checksec
-        binwalk
-        exiftool
-        zsteg
-        sleuthkit
-        foremost
-        autopsy
-        volatility3
-        z3
-        dnsrecon
-        xxd
       ];
 
       variables = {
