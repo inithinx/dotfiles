@@ -35,7 +35,7 @@
   outputs = inputs @ {nixpkgs, ...}: let
     systems = [
       "x86_64-linux"
-      #"aarch64-linux" #Might add rpi4 later.
+      "aarch64-linux" #Might add rpi4 later.
     ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
     nixosSystem = hostname:

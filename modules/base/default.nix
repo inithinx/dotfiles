@@ -33,7 +33,6 @@ in {
       description = "Hashed password for the primary user";
       example = "";
     };
-
   };
 
   config = mkIf config.base.enable {
@@ -97,6 +96,8 @@ in {
         options = "--delete-older-than 3d";
       };
       settings = {
+        substituters = ["https://nix-community.cachix.org"];
+        trusted-public-keys = ["nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="];
         trusted-users = ["${config.base.username}"];
         experimental-features = [
           "nix-command"
@@ -171,7 +172,7 @@ in {
         syntaxHighlighting.enable = true;
         autosuggestions.enable = true;
         shellAliases = {
-          cat = "bat --color=auto";
+          cat = "bat --color=auto --style=plain --paging=never";
           grep = "grep --color=auto";
           v = "nvim";
         };
