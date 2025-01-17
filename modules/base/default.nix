@@ -166,7 +166,6 @@ in {
     programs = {
       zsh = {
         enable = true;
-        shellInit = "pfetch";
         vteIntegration = true;
         syntaxHighlighting.enable = true;
         autosuggestions.enable = true;
@@ -224,6 +223,7 @@ in {
               Macos = "";
               Linux = "󰌽";
               Debian = "󰣚";
+              Nixos = "";
             };
           };
 
@@ -327,7 +327,6 @@ in {
         ethtool
         zoxide
         bat
-        pfetch
 
         # System monitoring
         bottom
