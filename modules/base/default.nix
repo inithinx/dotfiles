@@ -180,7 +180,7 @@ in {
         enable = true;
         settings = {
           format = ''
-            [](surface0)$os$username[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$direnv[](fg:teal bg:blue)$docker_context[](fg:blue bg:flamingo)$time[ ](fg:flamingo)$line_break$character'';
+            [](surface0)$os$username[](bg:peach fg:surface0)$directory[](fg:peach bg:green)$git_branch$git_status[](fg:green bg:teal)$direnv[](fg:teal bg:blue)$docker_context[](fg:blue bg:flamingo)$line_break$character'';
 
           palette = "catppuccin_mocha";
 
@@ -271,13 +271,6 @@ in {
             symbol = " ";
             style = "bg:mantle";
             format = "[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)";
-          };
-
-          time = {
-            disabled = false;
-            time_format = "%R";
-            style = "bg:peach";
-            format = "[[  $time ](fg:mantle bg:purple)]($style)";
           };
 
           line_break.disabled = false;

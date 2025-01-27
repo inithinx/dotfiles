@@ -19,18 +19,11 @@
     hashedPassword = "$6$D.zKBWhRY7l3Y/DB$Yivmnrz2Tq4sqiNZZQcT7j36/dWyArQP0F7fbdok1X36dPo0w.H/qILyH17Qobc3tEzeEJ0ayzIw02vayCsOm.";
   };
   # Sets up neovim with nixvim.
-  editor = {
-    enable = true;
-  };
+  editor.enable = true;
 
   # K3sVM
   k3svm = {
     enable = false;
-    numberOfVMs = 3;
-    cpusPerVM = 4;
-    memoryPerVM = 4096;
-    storagePerVM = 25600;
-    bridgehosts = ["enp7s0"];
   };
 
   # Set up the arr* stack.

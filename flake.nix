@@ -41,10 +41,7 @@
     nixosSystem = hostname:
       nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs;};
-        modules = [
-          {_module.args.inputs = inputs;}
-          ./profiles/${hostname}
-        ];
+        modules = [./profiles/${hostname}];
       };
   in {
     packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});

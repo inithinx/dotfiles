@@ -10,7 +10,7 @@ with lib; {
   options.editor = {
     enable = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = "Enable the custom Nixvim editor configuration.";
     };
   };
