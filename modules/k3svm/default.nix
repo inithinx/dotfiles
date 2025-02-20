@@ -6,7 +6,7 @@
   ...
 }: {
   imports = [
-    inputs.microvm.nixosModules.host
+    inputs.microvm.nixosModules.host # Import MicroVM module
   ];
 
   options.k3svm = with lib; {
@@ -41,12 +41,48 @@
       default = [];
       description = "List of host network interfaces to bridge to the VMs";
     };
+
+    tailscale = {
+      enable = mkEnableOption "Enable automatic Tailscale authentication";
+
+      domain = mkOption {
+        type = types.str;
+        description = "Tailscale base domain (e.g., ruffe-tetra.ts.net). This is mandatory.";
+        example = "ruffe-tetra.ts.net";
+      };
+
+      authkey = mkOption {
+        type = types.str;
+        default = "";
+        description = "Tailscale authentication key";
+        example = "tskey-abc123...";
+      };
+    };
+
+    domain = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = "Custom base domain for the Kubernetes API. If set, 'api.' is automatically prepended.";
+      example = "nanosec.dev";
+    };
   };
 
   config = lib.mkIf config.k3svm.enable {
+    # Ensure `tailscale.domain` is mandatory
+    assertions = [
+      {
+        assertion = config.k3svm.tailscale.domain != null;
+        message = "Error: `k3svm.tailscale.domain` is required. Please provide the Tailscale base domain (e.g., ruffe-tetra.ts.net).";
+      }
+    ];
+
     microvm.vms = lib.genAttrs (map (n: "prod-${toString n}") (lib.range 1 config.k3svm.numberOfVMs)) (
       name: let
         vmNumber = lib.toInt (lib.last (lib.splitString "-" name));
+        baseDomain =
+          if config.k3svm.domain != null
+          then "api.${config.k3svm.domain}" # Custom domain → api.nanosec.dev
+          else "prod-${toString vmNumber}.${config.k3svm.tailscale.domain}"; # Tailscale → prod-1.ruffe-tetra.ts.net
       in {
         config = {
           microvm = {
@@ -73,7 +109,7 @@
             writableStoreOverlay = "/nix/.rw-store";
             interfaces = [
               {
-                id = name; # Use the VM name as the interface ID
+                id = name;
                 type = "bridge";
                 bridge = "br0";
                 mac = "52:54:00:${builtins.substring 0 2 (builtins.hashString "sha256" name)}:${
@@ -85,44 +121,38 @@
 
           users.users.${name} = {
             isNormalUser = true;
-            initialPassword = "${name}"; # Note: This is insecure for production!
+            initialPassword = "${name}";
             description = "Test user for microVMs";
-            extraGroups = ["wheel"]; # Optional: Grants sudo privileges.
+            extraGroups = ["wheel"];
           };
+
+          # Enable k3s
           services.k3s = {
             enable = true;
             role = "server";
-            tokenFile = "/var/lib/rancher/k3s/server/token";
-            extraFlags = toString (
+            token = "temp";
+            extraFlags =
               [
-                "--write-kubeconfig-mode \"0644\""
-                "--disable local-storage"
+                "--write-kubeconfig-mode=0644"
+                "--disable=local-storage"
+                "--vpn-auth=name=tailscale,joinKey=${config.k3svm.tailscale.authkey}"
               ]
               ++ (
                 if vmNumber == 1
                 then ["--cluster-init"]
-                else ["--server https://10.0.0.51:6443"]
-              )
-            );
-            clusterInit = vmNumber == 1;
+                else ["--server=https://${baseDomain}:6443"]
+              );
           };
 
+          # 🔥 Fix the PATH issue in k3s systemd service using mkForce
+          systemd.services.k3s.environment.PATH = lib.mkForce "/run/current-system/sw/bin:/usr/bin:/bin";
+
+          # Enable Tailscale
           services.tailscale.enable = true;
-          services.openiscsi = {
-            enable = true;
-            name = "iqn.2016-04.com.open-iscsi:${name}";
-          };
 
-          environment.systemPackages = with pkgs; [
-            neovim
-            k3s
-            cifs-utils
-            nfs-utils
-            git
-            htop
-            iptables
-            curl
-            wget
+          # Fixes for Longhorn and systemd path issues
+          systemd.tmpfiles.rules = [
+            "L+ /usr/local/bin - - - - /run/current-system/sw/bin/"
           ];
 
           boot.kernelParams = [
@@ -136,9 +166,7 @@
 
           system.stateVersion = "24.11";
           networking = {
-            interfaces.eth0 = {
-              useDHCP = true; # Enable DHCP just for eth0
-            };
+            interfaces.eth0.useDHCP = true;
             defaultGateway = {
               address = "10.0.0.1";
               interface = "eth0";
@@ -153,27 +181,17 @@
                 2380 # etcd peer
                 80 # Http
                 443 # Https
+                41641 # Tailscale
+              ];
+              allowedUDPPorts = [
+                41641 # Tailscale
+                8472 # Flannel VXLAN
               ];
             };
           };
         };
       }
     );
-
-    # Host system configuration
-    systemd.services.prepare-microvm-storage = {
-      description = "Prepare storage directory for MicroVMs";
-      wantedBy = ["multi-user.target"];
-      script = ''
-        mkdir -p /media/microvms
-        chown microvm:microvm /media/microvms
-        chmod 755 /media/microvms
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-      };
-    };
 
     networking.bridges."br0".interfaces = config.k3svm.bridgehosts;
 

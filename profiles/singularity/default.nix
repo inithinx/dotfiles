@@ -1,5 +1,4 @@
 {inputs, ...}: {
-  # You can import other NixOS modules here
   imports = [
     inputs.self.nixosModules.base
     inputs.self.nixosModules.editor
@@ -7,32 +6,56 @@
     inputs.self.nixosModules.mediastack
     inputs.self.nixosModules.proxy
     #inputs.self.nixosModules.selfhosted
-
     ./disko.nix
   ];
 
-  # Sets up sane defaults.
+  # Base configuration options
   base = {
     enable = true;
     hostname = "singularity";
     username = "nithin";
     hashedPassword = "$6$D.zKBWhRY7l3Y/DB$Yivmnrz2Tq4sqiNZZQcT7j36/dWyArQP0F7fbdok1X36dPo0w.H/qILyH17Qobc3tEzeEJ0ayzIw02vayCsOm.";
   };
-  # Sets up neovim with nixvim.
-  editor.enable = true;
 
-  # K3sVM
+  # Editor (neovim) configuration
+  editor = {
+    enable = true;
+  };
+
+  # K3s Virtual Machine cluster configuration
   k3svm = {
+    enable = false;
+    # Network configuration
+    bridgehosts = ["enp7s0"];
+
+    # VM resource configuration
+    numberOfVMs = 3; # Default: 3
+    cpusPerVM = 4; # Default: 4
+    memoryPerVM = 4096; # Default: 4096 MB
+    storagePerVM = 25600; # Default: 25600 MB
+
+    # Tailscale configuration
+    tailscale = {
+      enable = true; # Enable Tailscale auto-authentication
+      authkey = "tskey-auth-kYgJku5tPT11CNTRL-LjxeZzsjWehvGmG5hsMgehHugWUGtqhK"; # Your Tailscale auth key
+      domain = "ruffe-tetra.ts.net";
+    };
+    domain = "nanosec.dev";
+  };
+
+  # Media stack configuration (arr* applications)
+  mediastack = {
     enable = false;
   };
 
-  # Set up the arr* stack.
-  mediastack.enable = false;
-  proxy.enable = false;
+  # Proxy configuration
+  proxy = {
+    enable = false;
+  };
 
-  # Set up selfhosted stack, which is maddy, postgres and nextcloud.
+  # Selfhosted stack configuration (commented out in original)
   #selfhosted = {
-  #  enable = true;
+  #  enable = false;
   #  domain = config.age.secrets.domain.path;
   #  mail.brevo = {
   #    user = config.age.secrets.brevo-user.path;
