@@ -38,15 +38,15 @@ in {
   config = mkIf config.base.enable {
     boot = {
       kernelPackages = pkgs.linuxPackages_zen;
-      consoleLogLevel = 0;
+      consoleLogLevel = 3;
       kernelParams = [
         "quiet"
         "splash"
         "page_alloc.shuffle=1" # Memory management performance
       ];
       initrd = {
-        #systemd.enable = true;
-        verbose = false;
+        systemd.enable = true;
+        verbose = true;
       };
       loader = {
         timeout = 0;

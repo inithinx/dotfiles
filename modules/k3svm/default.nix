@@ -5,10 +5,12 @@
   pkgs,
   ...
 }: {
+  #### 1️⃣ Import Required Modules ####
   imports = [
-    inputs.microvm.nixosModules.host # Import MicroVM module
+    inputs.microvm.nixosModules.host  # Import MicroVM module
   ];
 
+  #### 2️⃣ Define Available Options ####
   options.k3svm = with lib; {
     enable = mkEnableOption "k3s microvm cluster";
 
@@ -36,9 +38,9 @@
       description = "Storage size in MB per VM";
     };
 
-    bridgehosts = mkOption {
-      type = types.listOf types.str;
-      default = [];
+    tapHost = mkOption {
+      type = types.str;
+      default = "";
       description = "List of host network interfaces to bridge to the VMs";
     };
 
@@ -67,6 +69,7 @@
     };
   };
 
+  #### 3️⃣ Apply Configuration Based on Options ####
   config = lib.mkIf config.k3svm.enable {
     # Ensure `tailscale.domain` is mandatory
     assertions = [
@@ -86,16 +89,16 @@
       in {
         config = {
           microvm = {
-            hypervisor = "qemu";
+            hypervisor = "cloud-hypervisor";
             vcpu = config.k3svm.cpusPerVM;
             mem = config.k3svm.memoryPerVM;
             volumes = [
               {
-                image = "/media/microvms/${name}.img";
+                image = "/media/microvms/${name}-store.img";
                 size = config.k3svm.storagePerVM;
                 autoCreate = true;
                 fsType = "ext4";
-                mountPoint = "/";
+                mountPoint = "/var/lib/longhorn";
               }
             ];
             shares = [
@@ -106,12 +109,14 @@
                 proto = "virtiofs";
               }
             ];
-            writableStoreOverlay = "/nix/.rw-store";
+
+	    # Networking
             interfaces = [
               {
                 id = name;
-                type = "bridge";
-                bridge = "br0";
+                type = "macvtap";
+                macvtap.link = config.k3svm.tapHost;
+		macvtap.mode = "bridge";
                 mac = "52:54:00:${builtins.substring 0 2 (builtins.hashString "sha256" name)}:${
                   builtins.substring 2 2 (builtins.hashString "sha256" name)
                 }:${builtins.substring 4 2 (builtins.hashString "sha256" name)}";
@@ -144,7 +149,7 @@
               );
           };
 
-          # 🔥 Fix the PATH issue in k3s systemd service using mkForce
+          # Fix the PATH issue in k3s systemd service using mkForce
           systemd.services.k3s.environment.PATH = lib.mkForce "/run/current-system/sw/bin:/usr/bin:/bin";
 
           # Enable Tailscale
@@ -185,15 +190,13 @@
               ];
               allowedUDPPorts = [
                 41641 # Tailscale
-                8472 # Flannel VXLAN
+                8472  # Flannel VXLAN
               ];
             };
           };
         };
       }
     );
-
-    networking.bridges."br0".interfaces = config.k3svm.bridgehosts;
 
     users.users.microvm = {
       isSystemUser = true;

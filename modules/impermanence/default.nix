@@ -40,14 +40,6 @@ in
       # Ensure persistence mount is ready at boot
       fileSystems."/persist".neededForBoot = true;
 
-      # Wipe root on boot
-      boot.initrd.postDeviceCommands = lib.mkAfter ''
-        mount ${config.disko.devices.disk.main.device}/root /btrfs_tmp
-        rm -rf /btrfs_tmp/*
-        btrfs subvolume create /${config.disko.devices.disk.main.device}/root
-        umount /btrfs_tmp
-      '';
-
       # Set up persistence
       environment.persistence."/persist" = {
         enable = true;

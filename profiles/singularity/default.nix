@@ -26,18 +26,18 @@
   k3svm = {
     enable = false;
     # Network configuration
-    bridgehosts = ["enp7s0"];
+    tapHost = "enp7s0";
 
     # VM resource configuration
     numberOfVMs = 3; # Default: 3
     cpusPerVM = 4; # Default: 4
     memoryPerVM = 4096; # Default: 4096 MB
-    storagePerVM = 25600; # Default: 25600 MB
+    storagePerVM = 128000; # Default: 25600 MB
 
     # Tailscale configuration
     tailscale = {
       enable = true; # Enable Tailscale auto-authentication
-      authkey = "tskey-auth-kYgJku5tPT11CNTRL-LjxeZzsjWehvGmG5hsMgehHugWUGtqhK"; # Your Tailscale auth key
+      authkey = "tskey-auth-k6RrQs3Kft11CNTRL-FK7HGK1XLZFwm6dWcGgWZFU5mcskDKEqT"; # Your Tailscale auth key
       domain = "ruffe-tetra.ts.net";
     };
     domain = "nanosec.dev";

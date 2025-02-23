@@ -1,5 +1,9 @@
 {
   disko.devices = {
+    nodev."/" = {
+      fsType = "tmpfs";
+      mountOptions = [ "defaults" "size=16G" "mode=755" ];
+    };
     disk.main = {
       device = "/dev/disk/by-id/ata-CT240BX500SSD1_2335E872B8C6";
       type = "disk";
@@ -34,15 +38,6 @@
                 };
                 "/persist" = {
                   mountpoint = "/persist";
-                  mountOptions = [
-                    "noatime"
-                    "nodiratime"
-                    "compress=zstd"
-                    "ssd"
-                  ];
-                };
-                "/root" = {
-                  mountpoint = "/";
                   mountOptions = [
                     "noatime"
                     "nodiratime"
